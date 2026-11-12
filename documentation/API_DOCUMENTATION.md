@@ -283,3 +283,4 @@ Comprehensive technical documentation for all endpoints provided by the **Studen
 | `404 Not Found` | Resource not located | Student ID not found in database, or unknown endpoint URL |
 | `409 Conflict` | Duplicate key | Attempt to insert/update duplicate email or rollNumber |
 | `500 Server Error` | Unexpected error | Internal server or database connection failure |
+

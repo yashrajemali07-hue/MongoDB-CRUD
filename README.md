@@ -90,8 +90,8 @@ student-management-api/
 
 1. Clone or download the repository to your local machine:
    ```bash
-   git clone https://github.com/yashrajemali07-hue/student-management-api.git
-   cd student-management-api
+   git clone https://github.com/yashrajemali07-hue/MongoDB-CRUD.git
+   cd MongoDB-CRUD
    ```
 2. Install the project dependencies:
    ```bash
@@ -297,9 +297,9 @@ Deploying this API to [Render](https://render.com/) is straightforward:
 1. Push your code to your GitHub repository.
 2. Sign in to your [Render Dashboard](https://dashboard.render.com/).
 3. Click **New +** and select **Web Service**.
-4. Connect your GitHub account and choose the `student-management-api` repository.
+4. Connect your GitHub account and choose the `MongoDB-CRUD` repository.
 5. Configure the service settings:
-   - **Name**: `student-management-api`
+   - **Name**: `mongodb-crud-api`
    - **Environment**: `Node`
    - **Region**: Closest to your location (e.g., Singapore or Frankfurt)
    - **Branch**: `main`

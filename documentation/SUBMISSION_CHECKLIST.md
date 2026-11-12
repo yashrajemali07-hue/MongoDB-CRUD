@@ -93,3 +93,4 @@ student-management-api/
    - *Answer*: HTTP `201 Created` specifically indicates that the request was fulfilled and resulted in the creation of a new resource, adhering strictly to REST specifications.
 5. **How are environment variables kept secure?**
    - *Answer*: `.env` stores secrets locally and is explicitly added to `.gitignore` so database credentials are never committed or exposed on public repositories. A `.env.example` file is provided for configuration guidance.
+

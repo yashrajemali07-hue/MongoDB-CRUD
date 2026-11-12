@@ -26,3 +26,4 @@ This directory is designated for storing project demonstration screenshots for y
 - Use high-resolution captures (full window or focused modal).
 - Keep credentials (e.g., MongoDB Atlas password in `.env`) blurred or hidden.
 - Place all `.png` or `.jpg` files directly in this folder.
+
