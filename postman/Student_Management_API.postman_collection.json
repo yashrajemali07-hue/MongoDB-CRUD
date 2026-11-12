@@ -1,0 +1,650 @@
+{
+  "info": {
+    "_postman_id": "c8e19b52-257a-4b9b-9c60-705b0df145a8",
+    "name": "Student Management REST API",
+    "description": "Comprehensive Postman test collection for Student Management REST API. Covers full CRUD functionality, data validation, and error test cases.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001"
+    },
+    {
+      "key": "studentId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "CRUD Operations",
+      "description": "Core CRUD endpoints for managing student records.",
+      "item": [
+        {
+          "name": "1. Create Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentName\": \"Aarav Sharma\",\n  \"email\": \"aarav.sharma@college.edu\",\n  \"rollNumber\": \"CS2026101\",\n  \"branch\": \"Computer Science\",\n  \"year\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"]
+            },
+            "description": "Creates a new student record and automatically stores the returned _id in the studentId collection variable."
+          },
+          "response": [
+            {
+              "name": "201 Created Example",
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Student created successfully\",\n  \"student\": {\n    \"_id\": \"65f1a2b3c4d5e6f7a8b9c0d1\",\n    \"studentName\": \"Aarav Sharma\",\n    \"email\": \"aarav.sharma@college.edu\",\n    \"rollNumber\": \"CS2026101\",\n    \"branch\": \"Computer Science\",\n    \"year\": 3,\n    \"createdAt\": \"2026-11-12T18:00:00.000Z\",\n    \"updatedAt\": \"2026-11-12T18:00:00.000Z\",\n    \"__v\": 0\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const resData = pm.response.json();",
+                  "pm.test('Response contains student object', function () {",
+                  "    pm.expect(resData.success).to.be.true;",
+                  "    pm.expect(resData.student).to.be.an('object');",
+                  "    pm.expect(resData.student._id).to.be.a('string');",
+                  "});",
+                  "if (resData.student && resData.student._id) {",
+                  "    pm.collectionVariables.set('studentId', resData.student._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Get All Students",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"]
+            },
+            "description": "Retrieves all students sorted by creation date (newest first)."
+          },
+          "response": [
+            {
+              "name": "200 OK Example",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"count\": 1,\n  \"students\": [\n    {\n      \"_id\": \"65f1a2b3c4d5e6f7a8b9c0d1\",\n      \"studentName\": \"Aarav Sharma\",\n      \"email\": \"aarav.sharma@college.edu\",\n      \"rollNumber\": \"CS2026101\",\n      \"branch\": \"Computer Science\",\n      \"year\": 3,\n      \"createdAt\": \"2026-11-12T18:00:00.000Z\",\n      \"updatedAt\": \"2026-11-12T18:00:00.000Z\",\n      \"__v\": 0\n    }\n  ]\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const resData = pm.response.json();",
+                  "pm.test('Returns students array and count', function () {",
+                  "    pm.expect(resData.success).to.be.true;",
+                  "    pm.expect(resData.students).to.be.an('array');",
+                  "    pm.expect(resData.count).to.be.a('number');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Get Student By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "{{studentId}}"]
+            },
+            "description": "Retrieves a specific student record using the studentId variable."
+          },
+          "response": [
+            {
+              "name": "200 OK Example",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"student\": {\n    \"_id\": \"65f1a2b3c4d5e6f7a8b9c0d1\",\n    \"studentName\": \"Aarav Sharma\",\n    \"email\": \"aarav.sharma@college.edu\",\n    \"rollNumber\": \"CS2026101\",\n    \"branch\": \"Computer Science\",\n    \"year\": 3,\n    \"createdAt\": \"2026-11-12T18:00:00.000Z\",\n    \"updatedAt\": \"2026-11-12T18:00:00.000Z\",\n    \"__v\": 0\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const resData = pm.response.json();",
+                  "pm.test('Returns student object with matching ID', function () {",
+                  "    pm.expect(resData.success).to.be.true;",
+                  "    pm.expect(resData.student).to.be.an('object');",
+                  "    pm.expect(resData.student._id).to.eql(pm.collectionVariables.get('studentId'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. Update Student Details",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentName\": \"Aarav Sharma\",\n  \"branch\": \"Information Technology\",\n  \"year\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "{{studentId}}"]
+            },
+            "description": "Updates allowed fields of the student identified by studentId."
+          },
+          "response": [
+            {
+              "name": "200 OK Example",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Student updated successfully\",\n  \"student\": {\n    \"_id\": \"65f1a2b3c4d5e6f7a8b9c0d1\",\n    \"studentName\": \"Aarav Sharma\",\n    \"email\": \"aarav.sharma@college.edu\",\n    \"rollNumber\": \"CS2026101\",\n    \"branch\": \"Information Technology\",\n    \"year\": 4,\n    \"createdAt\": \"2026-11-12T18:00:00.000Z\",\n    \"updatedAt\": \"2026-11-12T18:15:00.000Z\",\n    \"__v\": 0\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const resData = pm.response.json();",
+                  "pm.test('Student fields updated properly', function () {",
+                  "    pm.expect(resData.success).to.be.true;",
+                  "    pm.expect(resData.student.year).to.eql(4);",
+                  "    pm.expect(resData.student.branch).to.eql('Information Technology');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Delete Student",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "{{studentId}}"]
+            },
+            "description": "Deletes the student identified by studentId."
+          },
+          "response": [
+            {
+              "name": "200 OK Example",
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Student deleted successfully\",\n  \"student\": {\n    \"_id\": \"65f1a2b3c4d5e6f7a8b9c0d1\",\n    \"studentName\": \"Aarav Sharma\",\n    \"email\": \"aarav.sharma@college.edu\",\n    \"rollNumber\": \"CS2026101\",\n    \"branch\": \"Information Technology\",\n    \"year\": 4\n  }\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const resData = pm.response.json();",
+                  "pm.test('Confirmation message received', function () {",
+                  "    pm.expect(resData.success).to.be.true;",
+                  "    pm.expect(resData.message).to.eql('Student deleted successfully');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Validation & Error Scenarios",
+      "description": "Tests handling of malformed input, missing fields, duplicate entries, and invalid IDs.",
+      "item": [
+        {
+          "name": "Create Student - Missing Required Fields",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentName\": \"Incomplete Record\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"]
+            }
+          },
+          "response": [
+            {
+              "name": "400 Bad Request Example",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Year is required, Branch is required, Roll number is required, Email is required\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "const resData = pm.response.json();",
+                  "pm.test('Validation error message returned', function () {",
+                  "    pm.expect(resData.success).to.be.false;",
+                  "    pm.expect(resData.message).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Student - Invalid Email Format",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentName\": \"Test Student\",\n  \"email\": \"invalid-email-address\",\n  \"rollNumber\": \"CS2026999\",\n  \"branch\": \"CSE\",\n  \"year\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"]
+            }
+          },
+          "response": [
+            {
+              "name": "400 Bad Request Example",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Enter a valid email address\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "const resData = pm.response.json();",
+                  "pm.test('Email validation message returned', function () {",
+                  "    pm.expect(resData.success).to.be.false;",
+                  "    pm.expect(resData.message).to.include('valid email');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Student - Invalid Year (Must be 1-4)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentName\": \"Test Student\",\n  \"email\": \"test.year@college.edu\",\n  \"rollNumber\": \"CS2026998\",\n  \"branch\": \"CSE\",\n  \"year\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students"]
+            }
+          },
+          "response": [
+            {
+              "name": "400 Bad Request Example",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Year must be between 1 and 4\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "const resData = pm.response.json();",
+                  "pm.test('Year bounds validation message returned', function () {",
+                  "    pm.expect(resData.success).to.be.false;",
+                  "    pm.expect(resData.message).to.include('Year must be between 1 and 4');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Student - Invalid ObjectId",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/students/invalid-id-format",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "invalid-id-format"]
+            }
+          },
+          "response": [
+            {
+              "name": "400 Bad Request Example",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Invalid student ID\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "const resData = pm.response.json();",
+                  "pm.test('Invalid ID error message returned', function () {",
+                  "    pm.expect(resData.success).to.be.false;",
+                  "    pm.expect(resData.message).to.eql('Invalid student ID');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Student - Non-Existent ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/students/600000000000000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "600000000000000000000000"]
+            }
+          },
+          "response": [
+            {
+              "name": "404 Not Found Example",
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Student not found\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "const resData = pm.response.json();",
+                  "pm.test('Student not found message returned', function () {",
+                  "    pm.expect(resData.success).to.be.false;",
+                  "    pm.expect(resData.message).to.eql('Student not found');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Student - Empty Request Body",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "students", "{{studentId}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "400 Bad Request Example",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Request body must contain at least one field to update\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "const resData = pm.response.json();",
+                  "pm.test('Empty body error message returned', function () {",
+                  "    pm.expect(resData.success).to.be.false;",
+                  "    pm.expect(resData.message).to.eql('Request body must contain at least one field to update');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Non-Existent Route (404)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/non-existent-route",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "non-existent-route"]
+            }
+          },
+          "response": [
+            {
+              "name": "404 Not Found Example",
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Route not found - /api/non-existent-route\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "const resData = pm.response.json();",
+                  "pm.test('Route not found error returned', function () {",
+                  "    pm.expect(resData.success).to.be.false;",
+                  "    pm.expect(resData.message).to.include('Route not found');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

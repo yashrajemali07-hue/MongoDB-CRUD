@@ -1,57 +1,58 @@
 require("dotenv").config();
 
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
+const connectDB = require("./config/db");
 const studentRoutes = require("./routes/studentRoutes");
+const { notFound, errorHandler } = require("./middleware/errorHandler");
 
 const app = express();
 
+// Core middleware
 app.use(cors());
 app.use(express.json());
 
+// Root health-check endpoint
 app.get("/", (req, res) => {
   res.status(200).json({
-    message: "Student Management API is running!",
-    endpoints: "/api/students"
+    success: true,
+    message: "Student Management REST API is running successfully!",
+    endpoints: {
+      getAllStudents: "GET /api/students",
+      createStudent: "POST /api/students",
+      getStudentById: "GET /api/students/:id",
+      updateStudent: "PUT /api/students/:id",
+      deleteStudent: "DELETE /api/students/:id"
+    }
   });
 });
 
+// API Routes
 app.use("/api/students", studentRoutes);
 
-// Handle unknown routes
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
-});
+// 404 Not Found handler for undefined routes
+app.use(notFound);
 
-// Central error handler
-app.use((err, req, res, next) => {
-  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
-    return res.status(400).json({ message: "Invalid JSON payload" });
-  }
-  console.error(err);
-  res.status(500).json({ message: "Internal server error" });
-});
+// Centralized error handler
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI;
 
-async function startServer() {
+// Start server after establishing database connection
+const startServer = async () => {
   try {
-    if (!MONGODB_URI) {
-      throw new Error("MONGODB_URI is missing. Add it to your .env file.");
-    }
-
-    await mongoose.connect(MONGODB_URI);
-    console.log("MongoDB connected successfully");
+    await connectDB();
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   } catch (error) {
-    console.error("Unable to start server:", error.message);
+    console.error(`Unable to start server: ${error.message}`);
     process.exit(1);
   }
-}
+};
 
 startServer();
+
+module.exports = app;
+

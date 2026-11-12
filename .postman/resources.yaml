@@ -4,4 +4,4 @@ workspace:
 
 localResources:
   collections:
-    - ../postman_collection.json
+    - ../postman/Student_Management_API.postman_collection.json
